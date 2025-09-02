@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import TeamRegistrationModal from "./components/TeamRegistrationModal";
+import TeamRegistrationModal from "./components/RegistrationModal"";
 
 const Hero: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,7 +16,7 @@ const Hero: React.FC = () => {
       >
         Register Now
       </button>
-      <TeamRegistrationModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <RegistrationModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 };
