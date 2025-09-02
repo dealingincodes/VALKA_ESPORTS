@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import TeamRegistrationModal from "./components/RegistrationModal"";
+import RegistrationModal from "./components/RegistrationModal";
 
 const Hero: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
