@@ -22,21 +22,13 @@ interface RegistrationForm {
 
 // Simplified schema that matches the interface exactly
 const schema = yup.object().shape({
-  teamName: yup.string().required('Team name is required'),
-  teamLeaderName: yup.string().required('Team leader name is required'),
-  teamLeaderRollNumber: yup.string().required('Team leader roll number is required'),
-  batch: yup.string().required('Batch is required'),
-  members: yup.array()
-    .of(
-      yup.object().shape({
-        idNumber: yup.string().required('ID number is required'),
-        idName: yup.string().required('ID name is required'),
-        rollNumber: yup.string().required('Roll number is required'),
-      })
-    )
-    .min(4, 'At least 4 team members are required')
-    .max(5, 'Maximum 5 team members allowed')
-    .required(),
+  members: yup.array().of(
+  yup.object({
+    idNumber: yup.string().required('ID number is required'),
+    idName: yup.string().required('ID name is required'),
+    rollNumber: yup.string().required('Roll number is required'),
+  })
+).min(4, 'At least 4 team members are required').max(5, 'Maximum 5 team members allowed').required(),
 })
 
 interface RegistrationModalProps {
