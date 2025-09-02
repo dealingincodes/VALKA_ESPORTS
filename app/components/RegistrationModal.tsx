@@ -20,6 +20,7 @@ interface RegistrationForm {
   members: TeamMember[]
 }
 
+// UPDATE THIS SCHEMA:
 const schema = yup.object({
   teamName: yup.string().required('Team name is required'),
   teamLeaderName: yup.string().required('Team leader name is required'),
@@ -27,9 +28,21 @@ const schema = yup.object({
   batch: yup.string().required('Batch is required'),
   members: yup.array().of(
     yup.object({
-      idNumber: yup.string().required('ID number is required'),
-      idName: yup.string().required('ID name is required'),
-      rollNumber: yup.string().required('Roll number is required'),
+      idNumber: yup.string().when('$index', {
+        is: (index: number) => index < 4,
+        then: (schema) => schema.required('ID number is required'),
+        otherwise: (schema) => schema.optional(),
+      }),
+      idName: yup.string().when('$index', {
+        is: (index: number) => index < 4,
+        then: (schema) => schema.required('ID name is required'),
+        otherwise: (schema) => schema.optional(),
+      }),
+      rollNumber: yup.string().when('$index', {
+        is: (index: number) => index < 4,
+        then: (schema) => schema.required('Roll number is required'),
+        otherwise: (schema) => schema.optional(),
+      }),
     })
   ).min(4, 'At least 4 team members are required').max(5, 'Maximum 5 team members allowed'),
 })
