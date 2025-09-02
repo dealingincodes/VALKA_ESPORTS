@@ -1,0 +1,211 @@
+import React, { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+
+type Member = {
+  id: string;
+  name: string;
+  roll: string;
+};
+
+type FormValues = {
+  teamName: string;
+  leaderName: string;
+  leaderRoll: string;
+  batch: string;
+  members: Member[];
+  optionalMember?: Member;
+};
+
+interface TeamRegistrationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const batches = ["2022", "2023", "2024", "2025"];
+
+const TeamRegistrationModal: React.FC<TeamRegistrationModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
+  const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
+    defaultValues: {
+      members: Array(4).fill({ id: "", name: "", roll: "" }),
+      optionalMember: { id: "", name: "", roll: "" },
+    },
+  });
+
+  const onSubmit = async (data: FormValues) => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        "https://script.google.com/macros/s/AKfycbxTM2v3LKJmlO8HHjnHL_V8fq8xij6iw8oGfRsbYMs3rgkrbnVglifWdz6yRW7FvECF/exec",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
+      if (res.ok) {
+        alert("Registration successful!");
+        reset();
+        onClose();
+      } else {
+        alert("Registration failed. Please try again.");
+      }
+    } catch {
+      alert("Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
+        <button
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          onClick={onClose}
+          disabled={loading}
+        >
+          &times;
+        </button>
+        <h2 className="text-2xl font-bold mb-4 text-center">Team Registration</h2>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label className="block font-medium">Team Name</label>
+            <input
+              className="w-full border rounded px-3 py-2 mt-1"
+              {...register("teamName", { required: "Required" })}
+              disabled={loading}
+            />
+            {errors.teamName && (
+              <span className="text-red-500 text-sm">{errors.teamName.message}</span>
+            )}
+          </div>
+          <div>
+            <label className="block font-medium">Team Leader Name</label>
+            <input
+              className="w-full border rounded px-3 py-2 mt-1"
+              {...register("leaderName", { required: "Required" })}
+              disabled={loading}
+            />
+            {errors.leaderName && (
+              <span className="text-red-500 text-sm">{errors.leaderName.message}</span>
+            )}
+          </div>
+          <div>
+            <label className="block font-medium">Team Leader Roll Number</label>
+            <input
+              className="w-full border rounded px-3 py-2 mt-1"
+              {...register("leaderRoll", { required: "Required" })}
+              disabled={loading}
+            />
+            {errors.leaderRoll && (
+              <span className="text-red-500 text-sm">{errors.leaderRoll.message}</span>
+            )}
+          </div>
+          <div>
+            <label className="block font-medium">Batch</label>
+            <select
+              className="w-full border rounded px-3 py-2 mt-1"
+              {...register("batch", { required: "Required" })}
+              disabled={loading}
+            >
+              <option value="">Select Batch</option>
+              {batches.map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </select>
+            {errors.batch && (
+              <span className="text-red-500 text-sm">{errors.batch.message}</span>
+            )}
+          </div>
+          <div>
+            <label className="block font-medium mb-2">Team Members</label>
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div key={idx} className="grid grid-cols-3 gap-2 mb-2">
+                <input
+                  className="border rounded px-2 py-1"
+                  placeholder={`Member ${idx + 1} ID`}
+                  {...register(`members.${idx}.id`, { required: "Required" })}
+                  disabled={loading}
+                />
+                <input
+                  className="border rounded px-2 py-1"
+                  placeholder={`Member ${idx + 1} Name`}
+                  {...register(`members.${idx}.name`, { required: "Required" })}
+                  disabled={loading}
+                />
+                <input
+                  className="border rounded px-2 py-1"
+                  placeholder={`Member ${idx + 1} Roll Number`}
+                  {...register(`members.${idx}.roll`, { required: "Required" })}
+                  disabled={loading}
+                />
+              </div>
+            ))}
+            {errors.members && (
+              <span className="text-red-500 text-sm">All member fields are required.</span>
+            )}
+          </div>
+          <div>
+            <label className="block font-medium mb-2">5th Member (Optional)</label>
+            <div className="grid grid-cols-3 gap-2">
+              <input
+                className="border rounded px-2 py-1"
+                placeholder="Member 5 ID"
+                {...register("optionalMember.id")}
+                disabled={loading}
+              />
+              <input
+                className="border rounded px-2 py-1"
+                placeholder="Member 5 Name"
+                {...register("optionalMember.name")}
+                disabled={loading}
+              />
+              <input
+                className="border rounded px-2 py-1"
+                placeholder="Member 5 Roll Number"
+                {...register("optionalMember.roll")}
+                disabled={loading}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+              type="button"
+              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800"
+              onClick={onClose}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold ${
+                loading ? "opacity-60 cursor-not-allowed" : ""
+              }`}
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Register"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default
