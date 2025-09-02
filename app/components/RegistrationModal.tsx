@@ -7,9 +7,9 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 
 interface TeamMember {
-  idNumber: string
-  idName: string
-  rollNumber: string
+  idNumber?: string
+  idName?: string
+  rollNumber?: string
 }
 
 interface RegistrationForm {
@@ -17,7 +17,7 @@ interface RegistrationForm {
   teamLeaderName: string
   teamLeaderRollNumber: string
   batch: string
-  members: TeamMember[]
+  members?: TeamMember[]
 }
 
 // UPDATE THIS SCHEMA:
